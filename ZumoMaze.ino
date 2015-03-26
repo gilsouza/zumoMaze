@@ -4,6 +4,9 @@
 #include <ZumoBuzzer.h>
 #include <Pushbutton.h>
 
+void calibrate(bool rotate);
+void followLine();
+
 #define SENSOR_THRESHOLD 300
 #define ABOVE_LINE(sensor)((sensor) > SENSOR_THRESHOLD)
 #define TURN_SPEED 200
@@ -22,7 +25,7 @@ void setup()
   buzzer.play(">g32>>c32");
   sensor.init();
   button.waitForButton();
-  calibrate();
+  calibrate(true);
 }
 
 void loop()
@@ -67,7 +70,7 @@ void followLine()
   } 
 }
 
-void calibrate()
+void calibrate(bool rotate)
 {
   delay(1000);
   int i;
@@ -75,11 +78,17 @@ void calibrate()
   {
     if ((i > 10 && i <= 30) || (i > 50 && i <= 70))
     {
-      motors.setSpeeds(SPEED/2, SPEED/2);
+      if (rotate)
+        motors.setSpeeds(-SPEED, SPEED);
+      else
+        motors.setSpeeds(SPEED/2, SPEED/2);
     }
     else
     {
-      motors.setSpeeds(-SPEED/2, -SPEED/2);
+      if (rotate)
+        motors.setSpeeds(SPEED, -SPEED);
+      else
+        motors.setSpeeds(-SPEED/2, -SPEED/2);
     }
     sensor.calibrate();
     delay(20);
